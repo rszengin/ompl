@@ -35,7 +35,7 @@
 /* Author: Ioan Sucan */
 
 #include <ompl/base/SpaceInformation.h>
-#include <ompl/base/spaces/SE3StateSpace.h>
+#include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
 #include <ompl/geometric/SimpleSetup.h>
 
@@ -48,13 +48,13 @@ namespace og = ompl::geometric;
 bool isStateValid(const ob::State *state)
 {
     // cast the abstract state type to the type we expect
-    const auto *se3state = state->as<ob::SE3StateSpace::StateType>();
+    const auto *se2state = state->as<ob::SE2StateSpace::StateType>();
 
     // extract the first component of the state and cast it to what we expect
-    const auto *pos = se3state->as<ob::RealVectorStateSpace::StateType>(0);
+    const auto *pos = se2state->as<ob::RealVectorStateSpace::StateType>(0);
 
     // extract the second component of the state and cast it to what we expect
-    const auto *rot = se3state->as<ob::SO3StateSpace::StateType>(1);
+    const auto *rot = se2state->as<ob::SO2StateSpace::StateType>(1);
 
     // check validity of state defined by pos & rot
 
@@ -66,10 +66,10 @@ bool isStateValid(const ob::State *state)
 void plan()
 {
     // construct the state space we are planning in
-    auto space(std::make_shared<ob::SE3StateSpace>());
+    auto space(std::make_shared<ob::SE2StateSpace>());
 
-    // set the bounds for the R^3 part of SE(3)
-    ob::RealVectorBounds bounds(3);
+    // set the bounds for the R^2 part of SE(2)
+    ob::RealVectorBounds bounds(2);
     bounds.setLow(-1);
     bounds.setHigh(1);
 
@@ -131,10 +131,10 @@ void plan()
 void planWithSimpleSetup()
 {
     // construct the state space we are planning in
-    auto space(std::make_shared<ob::SE3StateSpace>());
+    auto space(std::make_shared<ob::SE2StateSpace>());
 
-    // set the bounds for the R^3 part of SE(3)
-    ob::RealVectorBounds bounds(3);
+    // set the bounds for the R^2 part of SE(2)
+    ob::RealVectorBounds bounds(2);
     bounds.setLow(-1);
     bounds.setHigh(1);
 
@@ -142,6 +142,8 @@ void planWithSimpleSetup()
 
     // define a simple setup class
     og::SimpleSetup ss(space);
+    
+    ss.setPlanner(std::make_shared<og::RRTConnect>(ss.getSpaceInformation()));
 
     // set state validity checking for this space
     ss.setStateValidityChecker([](const ob::State *state) { return isStateValid(state); });
@@ -179,7 +181,7 @@ int main(int /*argc*/, char ** /*argv*/)
 {
     std::cout << "OMPL version: " << OMPL_VERSION << std::endl;
 
-    plan();
+    // plan();
 
     std::cout << std::endl << std::endl;
 
