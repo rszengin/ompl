@@ -173,12 +173,13 @@ endif()
 # R is needed for running Planner Arena locally
 find_program(R_EXEC R)
 
-add_subdirectory(py-bindings)
+# add_subdirectory(py-bindings)
 add_subdirectory(src)
-add_subdirectory(tests)
-add_subdirectory(demos)
+# add_subdirectory(tests)
+# add_subdirectory(demos)
 add_subdirectory(scripts)
 add_subdirectory(doc)
+add_subdirectory(kurcalamalar)
 
 target_link_flags(ompl)
 set(PKG_NAME "ompl")
