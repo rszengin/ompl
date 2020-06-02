@@ -66,7 +66,7 @@ bool isStateValid(const ob::State *state)
 void planWithSimpleSetup()
 {
     // construct the state space we are planning in
-    auto space(std::make_shared<ob::DubinsStateSpace>(1.0, false));
+    auto space(std::make_shared<ob::DubinsStateSpace>(0.1, false));
 
     // set the bounds for the R^2 part of SE(2)
     ob::RealVectorBounds bounds(2);
@@ -85,11 +85,13 @@ void planWithSimpleSetup()
 
     // create a random start state
     ob::ScopedState<> start(space);
-    start.random();
+    start = {-0.95, -0.95, 0};
+    // start.print();
 
     // create a random goal state
     ob::ScopedState<> goal(space);
-    goal.random();
+    goal = {0.95, 0.95, 0};
+    // goal.print();
 
     // set the start and goal states
     ss.setStartAndGoalStates(start, goal);
@@ -99,13 +101,13 @@ void planWithSimpleSetup()
     ss.print();
 
     // attempt to solve the problem within one second of planning time
-    ob::PlannerStatus solved = ss.solve(1.0);
+    ob::PlannerStatus solved = ss.solve(5.0);
 
     if (solved)
     {
         std::cout << "Found solution:" << std::endl;
         // print the path to screen
-        ss.simplifySolution();
+        // ss.simplifySolution();
         ss.getSolutionPath().print(std::cout);
     }
     else
